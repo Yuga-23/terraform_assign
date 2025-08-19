@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Clone Repo') {
             steps {
-                git url: 'https://github.com/Yuga-23/terraform_assign', branch: 'main'
+                git url: 'https://github.com/Yuga-23/terraform_assign.git', branch: 'main'
             }
         }
 
