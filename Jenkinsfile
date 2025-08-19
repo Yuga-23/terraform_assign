@@ -2,47 +2,67 @@ pipeline {
     agent any
 
     environment {
-        AWS_ACCESS_KEY_ID = credentials('aws-access-key-id')
+        AWS_ACCESS_KEY_ID     = credentials('aws-access-key-id')
         AWS_SECRET_ACCESS_KEY = credentials('aws-secret-access-key')
     }
 
     stages {
-        stage('Debug Git') {
+        stage('Clone Terraform Repo') {
             steps {
-                sh '''
-                    echo "Checking Git installation..."
-                    which git
-                    git --version
-                    echo "Current user:"
-                    whoami
-                    echo "Environment PATH:"
-                    echo $PATH
-                '''
+                echo '🔍 Starting: Clone Terraform Repo'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/main']],
+                    userRemoteConfigs: [[
+                        url: 'https://github.com/Yuga-23/terraform_assign.git',
+                        credentialsId: 'github-credentials'
+                    ]]
+                ])
+                echo '✅ Completed: Clone Terraform Repo'
             }
         }
 
-        stage('Clone Repo') {
+        stage('Initialize Terraform') {
             steps {
-                git url: 'https://github.com/Yuga-23/terraform_assign.git', branch: 'main'
-            }
-        }
-
-        stage('Terraform Init') {
-            steps {
+                echo '🔧 Starting: Terraform Init'
                 sh 'terraform init'
+                echo '✅ Completed: Terraform Init'
             }
         }
 
-        stage('Terraform Plan') {
+        stage('Validate Terraform') {
             steps {
+                echo '🔍 Starting: Terraform Validate'
+                sh 'terraform validate'
+                echo '✅ Completed: Terraform Validate'
+            }
+        }
+
+        stage('Plan Infrastructure') {
+            steps {
+                echo '📐 Starting: Terraform Plan'
                 sh 'terraform plan -out=tfplan'
+                echo '✅ Completed: Terraform Plan'
             }
         }
 
-        stage('Terraform Apply') {
+        stage('Apply Infrastructure') {
             steps {
-                sh 'terraform apply -auto-approve tfplan'
+                echo '🚀 Ready to Apply: Awaiting Approval'
+                input message: 'Approve Terraform Apply?'
+                echo '🛠️ Starting: Terraform Apply'
+                sh 'terraform apply tfplan'
+                echo '✅ Completed: Terraform Apply'
             }
+        }
+    }
+
+    post {
+        success {
+            echo '🎉 Pipeline finished successfully!'
+        }
+        failure {
+            echo '⚠️ Pipeline failed. Check which stage was last completed.'
         }
     }
 }
