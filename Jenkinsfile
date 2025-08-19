@@ -7,6 +7,20 @@ pipeline {
     }
 
     stages {
+        stage('Debug Git') {
+            steps {
+                sh '''
+                    echo "Checking Git installation..."
+                    which git
+                    git --version
+                    echo "Current user:"
+                    whoami
+                    echo "Environment PATH:"
+                    echo $PATH
+                '''
+            }
+        }
+
         stage('Clone Repo') {
             steps {
                 git url: 'https://github.com/Yuga-23/terraform_assign.git', branch: 'main'
