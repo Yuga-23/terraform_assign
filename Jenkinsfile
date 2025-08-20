@@ -25,7 +25,7 @@ pipeline {
         stage('Initialize Terraform') {
             steps {
                 echo '🔧 Starting: Terraform Init'
-                sh 'terraform init'
+                bat 'terraform init'
                 echo '✅ Completed: Terraform Init'
             }
         }
@@ -33,7 +33,7 @@ pipeline {
         stage('Validate Terraform') {
             steps {
                 echo '🔍 Starting: Terraform Validate'
-                sh 'terraform validate'
+                bat 'terraform validate'
                 echo '✅ Completed: Terraform Validate'
             }
         }
@@ -41,7 +41,7 @@ pipeline {
         stage('Plan Infrastructure') {
             steps {
                 echo '📐 Starting: Terraform Plan'
-                sh 'terraform plan -out=tfplan'
+                bat 'terraform plan -out=tfplan'
                 echo '✅ Completed: Terraform Plan'
             }
         }
@@ -51,7 +51,7 @@ pipeline {
                 echo '🚀 Ready to Apply: Awaiting Approval'
                 input message: 'Approve Terraform Apply?'
                 echo '🛠️ Starting: Terraform Apply'
-                sh 'terraform apply tfplan'
+                bat 'terraform apply tfplan'
                 echo '✅ Completed: Terraform Apply'
             }
         }
@@ -59,7 +59,7 @@ pipeline {
 
     post {
         success {
-            echo '🎉 Pipeline finished successfully!'
+            echo '🎉 Pipeline finibated successfully!'
         }
         failure {
             echo '⚠️ Pipeline failed. Check which stage was last completed.'
