@@ -7,62 +7,45 @@ pipeline {
     }
 
     stages {
-        stage('Clone Terraform Repo') {
+        stage('Clone Repo') {
             steps {
-                echo '🔍 Starting: Clone Terraform Repo'
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/main']],
-                    userRemoteConfigs: [[
-                        url: 'https://github.com/Yuga-23/terraform_assign.git',
-                        credentialsId: 'github-credentials'
-                    ]]
-                ])
-                echo '✅ Completed: Clone Terraform Repo'
+                git branch: 'main', url: 'https://github.com/Yuga-23/terraform_assign.git', credentialsId: 'github-credentials'
             }
         }
 
-        stage('Initialize Terraform') {
+        stage('Terraform Init') {
             steps {
-                echo '🔧 Starting: Terraform Init'
                 bat 'terraform init -upgrade'
-                echo '✅ Completed: Terraform Init'
             }
         }
 
-        stage('Validate Terraform') {
+        stage('Terraform Validate') {
             steps {
-                echo '🔍 Starting: Terraform Validate'
                 bat 'terraform validate'
-                echo '✅ Completed: Terraform Validate'
             }
         }
 
-        stage('Plan Infrastructure') {
+        stage('Terraform Plan') {
             steps {
-                echo '📐 Starting: Terraform Plan'
                 bat 'terraform plan -out=tfplan'
-                echo '✅ Completed: Terraform Plan'
+                echo ' Plan generated.'
             }
         }
 
-        stage('Apply Infrastructure') {
+        stage('Terraform Apply') {
             steps {
-                echo '🚀 Ready to Apply: Awaiting Approval'
-                input message: 'Approve Terraform Apply?'
-                echo '🛠️ Starting: Terraform Apply'
-                bat 'terraform apply tfplan'
-                echo '✅ Completed: Terraform Apply'
+                bat 'terraform apply -auto-approve tfplan'
+                echo ' Apply complete.'
             }
         }
     }
 
     post {
         success {
-            echo '🎉 Pipeline finibated successfully!'
+            echo ' Pipeline finished successfully.'
         }
         failure {
-            echo '⚠️ Pipeline failed. Check which stage was last completed.'
+            echo ' Pipeline failed. Check logs for details.'
         }
     }
 }
