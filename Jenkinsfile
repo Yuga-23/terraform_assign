@@ -25,7 +25,7 @@ pipeline {
         stage('Initialize Terraform') {
             steps {
                 echo '🔧 Starting: Terraform Init'
-                bat 'terraform init'
+                bat 'terraform init -upgrade'
                 echo '✅ Completed: Terraform Init'
             }
         }
