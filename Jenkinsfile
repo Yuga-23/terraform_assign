@@ -16,26 +16,26 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                sh 'terraform init -upgrade'
+                sh 'PATH=/usr/local/bin:$PATH terraform init -upgrade'
             }
         }
 
         stage('Terraform Validate') {
             steps {
-                sh 'terraform validate'
+                sh 'PATH=/usr/local/bin:$PATH terraform validate'
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                sh 'terraform plan -out=tfplan'
+                sh 'PATH=/usr/local/bin:$PATH terraform plan -out=tfplan'
                 echo ' Plan generated.'
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                sh 'terraform apply -auto-approve tfplan'
+                sh 'PATH=/usr/local/bin:$PATH terraform apply -auto-approve tfplan'
                 echo ' Apply complete.'
             }
         }
