@@ -15,26 +15,26 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                bat 'terraform init -upgrade'
+                sh 'terraform init -upgrade'
             }
         }
 
         stage('Terraform Validate') {
             steps {
-                bat 'terraform validate'
+                sh 'terraform validate'
             }
         }
 
         stage('Terraform Plan') {
             steps {
-                bat 'terraform plan -out=tfplan'
+                sh 'terraform plan -out=tfplan'
                 echo ' Plan generated.'
             }
         }
 
         stage('Terraform Apply') {
             steps {
-                bat 'terraform apply -auto-approve tfplan'
+                sh 'terraform apply -auto-approve tfplan'
                 echo ' Apply complete.'
             }
         }
